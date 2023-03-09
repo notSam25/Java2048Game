@@ -3,7 +3,7 @@
 
 # Maven build target
 /Java2048/target
-
+/vscode
 # Log file
 *.log
 
