@@ -41,6 +41,13 @@
   <include>**/*.java</include>
   </includes>
   </resource>
+  
+  <resource>
+  <directory>src/main/java/com/Java2048/app/Game</directory>
+  <includes>
+  <include>**/*.java</include>
+  </includes>
+  </resource>
 
   </resources>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
