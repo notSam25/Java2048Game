@@ -2,6 +2,7 @@ package com.Java2048.app.GFX;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,7 +18,20 @@ public class Frame extends JFrame {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            // FIXME unimplemented method
+
+            // Draw the board outline
+            g.setColor(Color.black);
+
+            g.drawLine(0, 150, 600, 150);
+            g.drawLine(0, 300, 600, 300);
+            g.drawLine(0, 450, 600, 450);
+
+            g.drawLine(150, 0, 150, 600);
+            g.drawLine(300, 0, 300, 600);
+            g.drawLine(450, 0, 450, 600);
+
+            // FIXME draw the numbers for the squares
+
             g.dispose();
         }
     }
@@ -27,7 +41,7 @@ public class Frame extends JFrame {
      */
     public Frame() {
         m_Panel.setDoubleBuffered(true);
-        m_Panel.setPreferredSize(new Dimension(400, 400));
+        m_Panel.setPreferredSize(new Dimension(600, 600));
 
         this.setTitle(m_WindowName);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,13 +81,13 @@ public class Frame extends JFrame {
             KeyboardHandler.update(); // Update all inputs
             // Handle new input
 
-            if(KeyboardHandler.keys[KeyboardHandler.GetKey('w')].pressed) {
+            if (KeyboardHandler.keys[KeyboardHandler.GetKey('w')].pressed) {
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.UP);
-            } else if(KeyboardHandler.keys[KeyboardHandler.GetKey('a')].pressed) {
+            } else if (KeyboardHandler.keys[KeyboardHandler.GetKey('a')].pressed) {
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.LEFT);
-            } else if(KeyboardHandler.keys[KeyboardHandler.GetKey('s')].pressed) {
+            } else if (KeyboardHandler.keys[KeyboardHandler.GetKey('s')].pressed) {
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.DOWN);
-            } else if(KeyboardHandler.keys[KeyboardHandler.GetKey('d')].pressed) {
+            } else if (KeyboardHandler.keys[KeyboardHandler.GetKey('d')].pressed) {
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.RIGHT);
             }
 
