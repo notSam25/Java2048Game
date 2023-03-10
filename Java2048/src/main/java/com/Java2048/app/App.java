@@ -9,5 +9,6 @@ import com.Java2048.app.GFX.Frame;
 public class App {
     public static void main(String[] args) {
         Frame frame = new Frame();
+        frame.handleGame();
     }
 }

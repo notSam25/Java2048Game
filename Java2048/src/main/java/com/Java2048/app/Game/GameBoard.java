@@ -44,7 +44,7 @@ public class GameBoard {
                     if (canMove(c - 1, row)) {
                         Tile nextTile = currentBoardTiles[c - 1][row];
                         if (nextTile == null) {
-                            canMove--;
+                            canMove++;
                             continue;
                         } else if (curTile.getCurValue() == nextTile.getCurValue()) {
                             return c - 1;
@@ -76,7 +76,7 @@ public class GameBoard {
                     if (canMove(col, r - 1)) {
                         Tile nextTile = currentBoardTiles[col][r - 1];
                         if (nextTile == null) {
-                            canMove--;
+                            canMove++;
                             continue;
                         } else if (curTile.getCurValue() == nextTile.getCurValue()) {
                             return r - 1;
@@ -122,8 +122,10 @@ public class GameBoard {
                 switch (direction) {
                     case DOWN:
                         // Check if the input is on the board
-                        if (canMove(c - 1, r)) {
+                        if (currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
+                            if (tilesToMove == 0|| !canMove(c + tilesToMove, r))
+                                continue;
                             if (currentBoardTiles[c - tilesToMove][r] == null) { // If there is no tile
                                 currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
                                 currentBoardTiles[c] = null;
@@ -138,11 +140,13 @@ public class GameBoard {
                         break;
                     case LEFT:
                         // Check if the input is on the board
-                        if (canMove(c, r - 1)) {
+                        if (currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
+                            if (tilesToMove == 0|| !canMove(c, r - tilesToMove))
+                                continue;
                             if (currentBoardTiles[c][r - tilesToMove] == null) { // If there is no tile
                                 currentBoardTiles[c][r - tilesToMove] = currentBoardTiles[c][r];
-                                currentBoardTiles[c] = null;
+                                currentBoardTiles[c][r] = null;
                             } else {
                                 // If there is a tile replace our tile with it, and double the value.
                                 currentBoardTiles[c][r - tilesToMove] = currentBoardTiles[c][r];
@@ -154,15 +158,24 @@ public class GameBoard {
                         break;
                     case RIGHT:
                         // Check if the input is on the board
-                        if (canMove(c, r + 1)) {
+                        if (currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
+                            if (tilesToMove == 0 || !canMove(c, r + tilesToMove))
+                                continue;
+                             System.out.println("pos: " + c + " | " + r);
+                             System.out.println("ttm: " + tilesToMove);
                             if (currentBoardTiles[c][r + tilesToMove] == null) { // If there is no tile
                                 currentBoardTiles[c][r + tilesToMove] = currentBoardTiles[c][r];
-                                currentBoardTiles[c] = null;
+                                currentBoardTiles[c][r] = null;
                             } else {
                                 // If there is a tile replace our tile with it, and double the value.
+                                System.out.println("current count: " + currentBoardTiles[c][r].getCurValue());
+                                System.out
+                                        .println("other count: " + currentBoardTiles[c][r + tilesToMove].getCurValue());
                                 currentBoardTiles[c][r + tilesToMove] = currentBoardTiles[c][r];
                                 currentBoardTiles[c][r] = null;
+                                System.out.println(
+                                        "current count: " + currentBoardTiles[c][r + tilesToMove].getCurValue());
                                 currentBoardTiles[c][r + tilesToMove]
                                         .setCurValue(currentBoardTiles[c][r + tilesToMove].getCurValue() * 2);
                             }
@@ -170,11 +183,13 @@ public class GameBoard {
                         break;
                     case UP:
                         // Check if the input is on the board
-                        if (canMove(c - 1, r)) {
+                        if (currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
+                            if (tilesToMove == 0|| !canMove(c - tilesToMove, r))
+                                continue;
                             if (currentBoardTiles[c - tilesToMove][r] == null) { // If there is no tile
                                 currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
-                                currentBoardTiles[c] = null;
+                                currentBoardTiles[c][r] = null;
                             } else {
                                 // If there is a tile replace our tile with it, and double the value.
                                 currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
