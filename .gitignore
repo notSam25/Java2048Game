@@ -4,6 +4,9 @@
 # Maven build target
 /Java2048/target
 
+# InteliJ files
+/.idea
+
 # Log file
 *.log
 
