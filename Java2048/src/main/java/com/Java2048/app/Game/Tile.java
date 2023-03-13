@@ -5,6 +5,10 @@ public class Tile {
         this.curValue = (Math.ceil(Math.random()) + 1) == 2 ? 2 : 4;
     }
 
+    public Tile(int value) {
+        this.curValue = value;
+    }
+
     /*
      * Returns the current number value of the tile.
      * 
@@ -14,12 +18,5 @@ public class Tile {
         return curValue;
     }
 
-    /*
-     * Sets the value of the tile
-     */
-    public void setCurValue(int curValue) {
-        this.curValue = curValue;
-    }
-
-    private int curValue = 0;
+    private final int curValue;
 }

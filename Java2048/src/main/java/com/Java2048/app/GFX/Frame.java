@@ -13,8 +13,13 @@ import com.Java2048.app.Game.GameBoard.MoveDirection;
 import com.Java2048.app.Util.KeyboardHandler;
 
 public class Frame extends JFrame {
-    private class Panel extends JPanel {
+    private static class Panel extends JPanel {
 
+        /*
+         * An override of the component method that draws the window for the game.
+         *
+         * @note see Oracle documentation for information regarding this method.
+         */
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -31,17 +36,33 @@ public class Frame extends JFrame {
             g.drawLine(450, 0, 450, 600);
 
             // FIXME draw the numbers for the squares
+            for (int c = 0; c < 4; c++) {
+                for (int r = 0; r < 4; r++) {
+                    Tile curTile = this.m_GameBoard[c][r];
+                    g.drawString("" + (curTile == null ? "" : curTile.getCurValue()), 75 + (150 * r), 75 + (150 * c));
+                }
+            }
 
             g.dispose();
         }
+
+        /*
+         * Updates the game board array.
+         *
+         * @param gameBoard the board to update for drawing
+         */
+        public void updateGameBoard(Tile[][] gameBoard) {
+            m_GameBoard = gameBoard.clone();
+        }
+        private Tile[][] m_GameBoard = new Tile[4][4];
     }
 
     /*
-     * Starts the window for drawing the game
+     * Starts the window for drawing the game.
      */
     public Frame() {
-        m_Panel.setDoubleBuffered(true);
-        m_Panel.setPreferredSize(new Dimension(600, 600));
+        this.m_Panel.setDoubleBuffered(true);
+        this.m_Panel.setPreferredSize(new Dimension(600, 600));
 
         this.setTitle(m_WindowName);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,33 +76,24 @@ public class Frame extends JFrame {
     }
 
     /*
-     * The logic handler for the game
+     * The logic handler for the game.
      */
     public void handleGame() {
         // Randomly add tiles to board
+
         for (int c = 0; c < 4; c++) {
             for (int r = 0; r < 4; r++) {
-                boolean addTile = (boolean) ((int) Math.round(Math.random()) == 1);
-                if (addTile == true) {
+                boolean addTile = ((int) Math.round(Math.random()) == 1);
+                if (addTile) {
                     this.m_GameBoard[c][r] = new Tile();
                 }
             }
         }
 
-        // FIXME this is debug code
-        for (int c = 0; c < 4; c++) {
-            for (int r = 0; r < 4; r++) {
-                Tile curTile = this.m_GameBoard[c][r];
-                System.out.print((curTile == null ? "-" : curTile.getCurValue()) + " ");
-            }
-            System.out.println();
-        }
-
         while (true) {
             KeyboardHandler.update(); // Update all inputs
-            // Handle new input
 
-            if (KeyboardHandler.keys[KeyboardHandler.GetKey('w')].pressed) {
+            if (KeyboardHandler.keys[KeyboardHandler.GetKey('w')].pressed) { // Handle user input
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.UP);
             } else if (KeyboardHandler.keys[KeyboardHandler.GetKey('a')].pressed) {
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.LEFT);
@@ -91,25 +103,16 @@ public class Frame extends JFrame {
                 this.m_GameBoard = GameBoard.playGame(this.m_GameBoard, MoveDirection.RIGHT);
             }
 
-            // FIXME this is debug code
-            for (int c = 0; c < 4; c++) {
-                for (int r = 0; r < 4; r++) {
-                    Tile curTile = this.m_GameBoard[c][r];
-                    System.out.print((curTile == null ? "-" : curTile.getCurValue()) + " ");
-                }
-                System.out.println();
-            }
-
+            this.m_Panel.updateGameBoard(this.m_GameBoard); // Update the game board before we render
             this.repaint(); // Draw to the window
             try {
                 Thread.sleep(10);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
     }
-
+    private final Panel m_Panel = new Panel();
     private Tile[][] m_GameBoard = new Tile[4][4];
     private static final String m_WindowName = "2048 | github.com/notSam25/Java2048/";
-    private final Panel m_Panel = new Panel();
 }

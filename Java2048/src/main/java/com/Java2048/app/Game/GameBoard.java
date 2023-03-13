@@ -2,15 +2,15 @@ package com.Java2048.app.Game;
 
 public class GameBoard {
 
-    public static enum MoveDirection {
+    public enum MoveDirection {
         LEFT,
         RIGHT,
         UP,
         DOWN
-    };
+    }
 
     /*
-     * Returns if the tile is within the game board.
+     * Returns if the tile is within the game board in array notation.
      * 
      * @param col the column to check
      * 
@@ -19,7 +19,7 @@ public class GameBoard {
      * @return the boolean if the col and row are within bounds of the board.
      */
     private static boolean canMove(int col, int row) {
-        return (col > 0 && col < 4 && row > 0 && row < 4);
+        return (col >= 0 && col < 4 && row >= 0 && row < 4);
     }
 
     /*
@@ -37,68 +37,79 @@ public class GameBoard {
      */
     private static int getMaxMoveTiles(Tile[][] currentBoardTiles, int col, int row, MoveDirection direction) {
         Tile curTile = currentBoardTiles[col][row];
+
         switch (direction) {
             case DOWN: {
                 int canMove = 0;
-                for (int c = col; c < 4; c--) {
-                    if (canMove(c - 1, row)) {
-                        Tile nextTile = currentBoardTiles[c - 1][row];
-                        if (nextTile == null) {
+                for (int c = col; c < 4; c++) {
+                    if (canMove(c + 1, row)) { // If the next position is on the board
+                        Tile nextTile = currentBoardTiles[c + 1][row];
+                        if(nextTile == null) {
                             canMove++;
-                            continue;
-                        } else if (curTile.getCurValue() == nextTile.getCurValue()) {
-                            return c - 1;
+                        } else if(nextTile.getCurValue() == curTile.getCurValue()) {
+                            canMove++;
+                        } else {
+                            return canMove;
                         }
-                    } else
+                    } else {
                         return canMove;
+                    }
                 }
                 return canMove;
             }
             case LEFT: {
                 int canMove = 0;
-                for (int r = row; r < 4; r--) {
-                    if (canMove(col, r - 1)) {
+                for (int r = row; r > 0; r--) {
+                    if (canMove(col, r - 1)) { // If the next position is on the board
                         Tile nextTile = currentBoardTiles[col][r - 1];
-                        if (nextTile == null) {
-                            canMove--;
-                            continue;
-                        } else if (curTile.getCurValue() == nextTile.getCurValue()) {
-                            return r - 1;
+                        if(nextTile == null) {
+                            canMove++;
+                        } else if(nextTile.getCurValue() == curTile.getCurValue()) {
+                            canMove++;
+                        } else {
+                            System.out.println("value mismatch");
+                            return canMove;
                         }
-                    } else
+                    } else {
+                        System.out.println("!canMove");
                         return canMove;
+                    }
                 }
                 return canMove;
             }
             case RIGHT: {
                 int canMove = 0;
-                for (int r = row; r < 4; r--) {
-                    if (canMove(col, r - 1)) {
-                        Tile nextTile = currentBoardTiles[col][r - 1];
-                        if (nextTile == null) {
+                for (int r = row; r < 4; r++) {
+                    if (canMove(col, r + 1)) { // If the next position is on the board
+                        Tile nextTile = currentBoardTiles[col][r + 1];
+                        if(nextTile == null) {
                             canMove++;
-                            continue;
-                        } else if (curTile.getCurValue() == nextTile.getCurValue()) {
-                            return r - 1;
+                        } else if(nextTile.getCurValue() == curTile.getCurValue()) {
+                            canMove++;
+                        } else {
+                            return canMove;
                         }
-                    } else
+                    } else {
                         return canMove;
+                    }
                 }
                 return canMove;
             }
             case UP: {
                 int canMove = 0;
-                for (int c = col; c < 4; c--) {
-                    if (canMove(c - 1, row)) {
+                for (int c = col; c > 0; c--) {
+                    if (canMove(c - 1, row)) { // If the next position is on the board
                         Tile nextTile = currentBoardTiles[c - 1][row];
-                        if (nextTile == null) {
-                            canMove--;
-                            continue;
-                        } else if (curTile.getCurValue() == nextTile.getCurValue()) {
-                            return c - 1;
+                        if(nextTile == null) {
+                            canMove++;
+                        } else if(nextTile.getCurValue() == curTile.getCurValue()) {
+                            canMove++;
+                        } else {
+                            return canMove;
                         }
-                    } else
+                    } else {
                         return canMove;
+                    }
                 }
                 return canMove;
             }
@@ -121,81 +132,87 @@ public class GameBoard {
             for (int r = 0; r < 4; r++) {
                 switch (direction) {
                     case DOWN:
-                        // Check if the input is on the board
-                        if (currentBoardTiles[c][r] != null) {
+                        if(currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
-                            if (tilesToMove == 0|| !canMove(c + tilesToMove, r))
-                                continue;
-                            if (currentBoardTiles[c - tilesToMove][r] == null) { // If there is no tile
-                                currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
-                                currentBoardTiles[c] = null;
-                            } else {
-                                // If there is a tile replace our tile with it, and double the value.
-                                currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
+                            System.out.printf("[%d][%d] Down: %d\n", r, c, tilesToMove);
+                            // If we need to move a tile
+                            if(tilesToMove > 0) {
+                                // If the tile we want to travel to is !empty
+                                if(currentBoardTiles[c + tilesToMove][r] != null) {
+                                    // Replace the tile with our current tile with double the value
+                                    currentBoardTiles[c + tilesToMove][r] = new Tile(currentBoardTiles[c][r].getCurValue() * 2);
+                                }
+                                else {
+                                    // Set the new tile to the current position
+                                    currentBoardTiles[c + tilesToMove][r] = currentBoardTiles[c][r];
+                                }
+
+                                // Remove our current tile from its previous position
                                 currentBoardTiles[c][r] = null;
-                                currentBoardTiles[c - tilesToMove][r]
-                                        .setCurValue(currentBoardTiles[c - tilesToMove][r].getCurValue() * 2);
                             }
                         }
                         break;
                     case LEFT:
-                        // Check if the input is on the board
-                        if (currentBoardTiles[c][r] != null) {
+                        if(currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
-                            if (tilesToMove == 0|| !canMove(c, r - tilesToMove))
-                                continue;
-                            if (currentBoardTiles[c][r - tilesToMove] == null) { // If there is no tile
-                                currentBoardTiles[c][r - tilesToMove] = currentBoardTiles[c][r];
+                            System.out.printf("[%d][%d] Left: %d\n", r, c, tilesToMove);
+
+                            // If we need to move a tile
+                            if(tilesToMove > 0) {
+                                // If the tile we want to travel to is !empty
+                                if(currentBoardTiles[c][r - tilesToMove] != null) {
+                                    // Replace the tile with our current tile with double the value
+                                    currentBoardTiles[c][r - tilesToMove] = new Tile(currentBoardTiles[c][r].getCurValue() * 2);
+                                }
+                                else {
+                                    // Set the new tile to the current position
+                                    currentBoardTiles[c][r - tilesToMove] = currentBoardTiles[c][r];
+                                }
+
+                                // Remove our current tile from its previous position
                                 currentBoardTiles[c][r] = null;
-                            } else {
-                                // If there is a tile replace our tile with it, and double the value.
-                                currentBoardTiles[c][r - tilesToMove] = currentBoardTiles[c][r];
-                                currentBoardTiles[c][r] = null;
-                                currentBoardTiles[c][r - tilesToMove]
-                                        .setCurValue(currentBoardTiles[c][r - tilesToMove].getCurValue() * 2);
                             }
                         }
                         break;
                     case RIGHT:
-                        // Check if the input is on the board
-                        if (currentBoardTiles[c][r] != null) {
+                        if(currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
-                            if (tilesToMove == 0 || !canMove(c, r + tilesToMove))
-                                continue;
-                             System.out.println("pos: " + c + " | " + r);
-                             System.out.println("ttm: " + tilesToMove);
-                            if (currentBoardTiles[c][r + tilesToMove] == null) { // If there is no tile
-                                currentBoardTiles[c][r + tilesToMove] = currentBoardTiles[c][r];
+                            System.out.printf("[%d][%d] Right: %d\n", r, c, tilesToMove);
+                            // If we need to move a tile
+                            if(tilesToMove > 0) {
+                                // If the tile we want to travel to is !empty
+                                if(currentBoardTiles[c][r + tilesToMove] != null) {
+                                    // Replace the tile with our current tile with double the value
+                                    currentBoardTiles[c][r + tilesToMove] = new Tile(currentBoardTiles[c][r].getCurValue() * 2);
+                                }
+                                else {
+                                    // Set the new tile to the current position
+                                    currentBoardTiles[c][r + tilesToMove] = currentBoardTiles[c][r];
+                                }
+
+                                // Remove our current tile from its previous position
                                 currentBoardTiles[c][r] = null;
-                            } else {
-                                // If there is a tile replace our tile with it, and double the value.
-                                System.out.println("current count: " + currentBoardTiles[c][r].getCurValue());
-                                System.out
-                                        .println("other count: " + currentBoardTiles[c][r + tilesToMove].getCurValue());
-                                currentBoardTiles[c][r + tilesToMove] = currentBoardTiles[c][r];
-                                currentBoardTiles[c][r] = null;
-                                System.out.println(
-                                        "current count: " + currentBoardTiles[c][r + tilesToMove].getCurValue());
-                                currentBoardTiles[c][r + tilesToMove]
-                                        .setCurValue(currentBoardTiles[c][r + tilesToMove].getCurValue() * 2);
                             }
                         }
                         break;
                     case UP:
-                        // Check if the input is on the board
-                        if (currentBoardTiles[c][r] != null) {
+                        if(currentBoardTiles[c][r] != null) {
                             int tilesToMove = getMaxMoveTiles(currentBoardTiles, c, r, direction);
-                            if (tilesToMove == 0|| !canMove(c - tilesToMove, r))
-                                continue;
-                            if (currentBoardTiles[c - tilesToMove][r] == null) { // If there is no tile
-                                currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
+                            System.out.printf("[%d][%d] Up: %d\n", r, c, tilesToMove);
+                            // If we need to move a tile
+                            if(tilesToMove > 0) {
+                                // If the tile we want to travel to is !empty
+                                if(currentBoardTiles[c - tilesToMove][r] != null) {
+                                    // Replace the tile with our current tile with double the value
+                                    currentBoardTiles[c - tilesToMove][r] = new Tile(currentBoardTiles[c][r].getCurValue() * 2);
+                                }
+                                else {
+                                    // Set the new tile to the current position
+                                    currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
+                                }
+
+                                // Remove our current tile from its previous position
                                 currentBoardTiles[c][r] = null;
-                            } else {
-                                // If there is a tile replace our tile with it, and double the value.
-                                currentBoardTiles[c - tilesToMove][r] = currentBoardTiles[c][r];
-                                currentBoardTiles[c][r] = null;
-                                currentBoardTiles[c - tilesToMove][r]
-                                        .setCurValue(currentBoardTiles[c - tilesToMove][r].getCurValue() * 2);
                             }
                         }
                         break;
